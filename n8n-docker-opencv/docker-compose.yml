@@ -1,0 +1,26 @@
+version: '3'
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile.n8n
+      args:
+        - S3_ENDPOINT=${S3_ENDPOINT}
+        - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+        - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
+        - AWS_S3_SECRET_ACCESS_KEY=${AWS_S3_SECRET_ACCESS_KEY}
+        # above args are used to mount docker container to s3 
+    ports:
+      - "5678:5678"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+      - N8N_CUSTOM_EXTENSIONS=/root/.n8n/custom
+    volumes:
+      - n8n_storage:/home/node/.n8n
+    restart: always
+    privileged: true 
+volumes:
+  n8n_storage:
